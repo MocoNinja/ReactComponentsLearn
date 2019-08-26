@@ -4,7 +4,13 @@ import Select from "./Select";
 export default class App extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      selectedFruit: null
+    };
+
     this.selectItemRef = React.createRef();
+    this.renderSelectedFruit = this.renderSelectedFruit.bind(this);
   }
 
   generateMockUpData() {
@@ -18,17 +24,31 @@ export default class App extends Component {
     ];
   }
 
+  setSelectedFruit() {
+    const selectValue = this.selectItemRef.current.state.selectedItem;
+    if (selectValue === null) {
+      console.error(`The select doesn't hava a selected value!`);
+      return null;
+    }
+    this.setState({
+      selectedFruit: JSON.parse(selectValue).name
+    });
+  }
   onSelectItemChange = () => {
-    console.log(
-      `The value of the select item is: ${this.selectItemRef.current.state.selectedItem}`
-    );
+    this.setSelectedFruit();
   };
 
   onSelectDataLoad = () => {
-    console.log(
-      `The value of the select item (ON LOAD) is: ${this.selectItemRef.current.state.selectedItem}`
+    this.setSelectedFruit();
+  };
+
+  renderSelectedFruit = () => {
+    return this.state.selectedFruit === null ? (
+      <p>No fruit selected!</p>
+    ) : (
+      this.state.selectedFruit
     );
-  }
+  };
 
   render() {
     return (
@@ -36,15 +56,25 @@ export default class App extends Component {
         <header>
           <h2>Hello, world!</h2>
         </header>
-        <div>
-          <Select
-            ref={this.selectItemRef}
-            items={this.generateMockUpData()}
-            displayNameField={"name"}
-            onChangeCallback={this.onSelectItemChange}
-            onLoadDataCallback={this.onSelectDataLoad}
-          />
-        </div>
+        <section id="staticSelect-1">
+          <header>
+            <h3>Static Select 1: Fruits</h3>
+          </header>
+          <div id="headerDiv">
+            <Select
+              ref={this.selectItemRef}
+              items={this.generateMockUpData()} // Comment at will!
+              displayNameField={"name"}
+              onChangeCallback={this.onSelectItemChange}
+              onLoadDataCallback={this.onSelectDataLoad}
+            />
+          </div>
+          <br />
+          <div id="destination">
+            Selected fruit is:{" "}
+            <span className="hightlight">{this.renderSelectedFruit()}</span>
+          </div>
+        </section>
       </div>
     );
   }
