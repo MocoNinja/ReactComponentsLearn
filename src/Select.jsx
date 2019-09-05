@@ -48,7 +48,7 @@ export default class Select extends Component {
         selectedItem: JSON.parse(newSelectedItemStringRepresentation)
       },
       /**
-       * Friendly remainder para esto y para todos
+       * Friendly reminder para esto y para todos
        *
        * Lo que se pone de callback, debe ser una función anónima,
        * ya que lleva un parámetro y si en vez de () => { funcion(valor) }
