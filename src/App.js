@@ -22,7 +22,6 @@ export default class App extends Component {
 
   handleComponentCheckboxToggle(event) {
     const [name, value] = [event.target.value, event.target.checked];
-    console.log(`Se ha pulsado el checbox ${name} y vale: ${value}`);
     const nameState = "render" + name;
     this.setState({
       [nameState]: value

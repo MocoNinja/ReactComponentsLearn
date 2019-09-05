@@ -5,30 +5,63 @@ export default class Select extends Component {
     super(props);
     this.state = {
       selectedItem: null,
-      canRender: false,
-      onChangeCallBack: this.props.onChangeCallBack || (() => {}),
-      onMountCallBack: this.props.onMountCallBack || (() => {}),
+      error: true,
+      onChangeCallback: this.props.onChangeCallback || (() => {}),
+      onLoadCallback: this.props.onLoadCallback || (() => {}),
       displayName: this.props.displayName || "nombre"
     };
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
     this.onLoad();
-    this.state.onMountCallBack();
   }
 
   onLoad() {
     if (this.props.data && this.props.data.length > 0) {
-      this.setState({
-        selectedItem: this.props.data[0],
-        canRender: true
-      });
+      this.setState(
+        {
+          selectedItem: this.props.data[0],
+          error: false
+        },
+        () => {
+          this.state.onLoadCallback(this.state.selectedItem);
+        }
+      );
     } else {
-      this.setState({
-        noDataLoadedError: true,
-        error: true
-      });
+      this.setState(
+        {
+          noDataLoadedError: true,
+          error: true
+        },
+        () => {
+          this.state.onLoadCallback(this.state.selectedItem);
+        }
+      );
     }
+  }
+
+  handleChange(event) {
+    const newSelectedItemStringRepresentation = event.target.value;
+    this.setState(
+      {
+        selectedItem: JSON.parse(newSelectedItemStringRepresentation)
+      },
+      /**
+       * Friendly remainder para esto y para todos
+       *
+       * Lo que se pone de callback, debe ser una función anónima,
+       * ya que lleva un parámetro y si en vez de () => { funcion(valor) }
+       * ponemos funcion(valor) estamos pasando el resultado de la función
+       * y no ella misma como callback, por lo que **no** tendrá el efecto
+       * deseado
+       *
+       * (o eso creo)
+       */
+      () => {
+        this.state.onChangeCallback(this.state.selectedItem);
+      }
+    );
   }
 
   renderOptions() {
@@ -36,7 +69,7 @@ export default class Select extends Component {
       this.props.data &&
       this.props.data.map((element, key) => {
         return (
-          <option key={"element-" + key}>
+          <option key={"element-" + key} value={JSON.stringify(element)}>
             {element[this.state.displayName]}
           </option>
         );
@@ -44,7 +77,7 @@ export default class Select extends Component {
     );
   }
 
-  renderError(renderGenericErrorOnly = true) {
+  renderError(renderGenericErrorOnly = false) {
     const possibleErrors = [
       {
         error: "noDataLoadedError",
@@ -70,7 +103,7 @@ export default class Select extends Component {
   }
 
   renderSelect() {
-    return <select>{this.renderOptions()}</select>;
+    return <select onChange={this.handleChange}>{this.renderOptions()}</select>;
   }
 
   render() {
