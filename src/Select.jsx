@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import "./Select.css";
 
 export default class Select extends Component {
   constructor(props) {
@@ -8,7 +9,8 @@ export default class Select extends Component {
       error: true,
       onChangeCallback: this.props.onChangeCallback || (() => {}),
       onLoadCallback: this.props.onLoadCallback || (() => {}),
-      displayName: this.props.displayName || "nombre"
+      displayName: this.props.displayName || "nombre",
+      valid: false
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -41,11 +43,17 @@ export default class Select extends Component {
     }
   }
 
+  /**
+   * IDEA: Meter algo de validación?
+   */
   handleChange(event) {
     const newSelectedItemStringRepresentation = event.target.value;
+    const valid = JSON.parse(newSelectedItemStringRepresentation).nombre === "Ariel";
+    console.log(valid);
     this.setState(
       {
-        selectedItem: JSON.parse(newSelectedItemStringRepresentation)
+        selectedItem: JSON.parse(newSelectedItemStringRepresentation),
+        valid: valid
       },
       /**
        * Friendly reminder para esto y para todos
@@ -62,6 +70,10 @@ export default class Select extends Component {
         this.state.onChangeCallback(this.state.selectedItem);
       }
     );
+  }
+
+  generateValidOrInvalidClassName() {
+    return this.state.valid ? "valid" : "invalid";
   }
 
   renderOptions() {
@@ -103,7 +115,7 @@ export default class Select extends Component {
   }
 
   renderSelect() {
-    return <select onChange={this.handleChange}>{this.renderOptions()}</select>;
+    return <select className={this.generateValidOrInvalidClassName()} onChange={this.handleChange}>{this.renderOptions()}</select>;
   }
 
   render() {
