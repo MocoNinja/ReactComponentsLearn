@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import AppSelectRef from "./AppSelectRef";
+import StarWarsApp from "./ApiStarWarsApp/StarWarsApp";
 
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      componentsToRender: [],
-      renderAppSelectRef: false
+      componentsToRender: []
     };
     this.handleComponentCheckboxToggle = this.handleComponentCheckboxToggle.bind(
       this
@@ -14,7 +14,7 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    const components = ["AppSelectRef"];
+    const components = ["AppSelectRef", "StarWarsApp"];
     this.setState({
       componentsToRender: components
     });
@@ -47,7 +47,8 @@ export default class App extends Component {
 
   renderComponents() {
     return [
-      this.state.renderAppSelectRef ? <AppSelectRef key="adadhalk" /> : <></>,
+      this.state.renderAppSelectRef ? <AppSelectRef /> : <></>,
+      this.state.renderStarWarsApp ? <StarWarsApp /> : <></>
     ].map((element, index) => {
       return <div key={index}>{element}</div>;
     });
